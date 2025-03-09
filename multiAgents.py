@@ -87,4 +87,29 @@ def negamax(game_status: GameStatus, depth: int, turn_multiplier: int, alpha=flo
     THE LINE TO RETURN THESE TWO IS COMMENTED BELOW WHICH YOU CAN USE
     
     """
-    #return value, best_move
+	availableMoves = [] #Create list of available moves to store
+
+	
+	for i in range(len(game_state.board_state)): #Loop through each row of the board
+		for j in range(len(game_state.board_state[i])): #Loop through each column of the i row
+			if game_state.board_state[i][j] == 0: # If space is "empty" (0), then available move
+				availableMoves.append((i,j)) #Add empty space to list
+	value = alpha
+	best_move = None
+
+	
+	for space in availableMoves: #Loop through the list
+		new_game_status = game_state.get_new_state(space) #Obtain new game state after making move
+		neg_value, nega_move = negamax(new_game_status, depth - 1, -turn_multiplier, -beta, -alpha) #Utilize negamax algorithm to find best move
+
+		if -nega_value > value: #Update value and best move if better move is found
+			value = -nega_value
+			best_move = space
+
+		alpha = max(alpha, value) #Update alpha with max value
+
+		if alpha >= beta: #Stop searching if alpha is greater then or equal to beta
+			break
+	
+    	#return value, best_move
+	return value, best_move
