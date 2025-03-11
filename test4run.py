@@ -118,19 +118,19 @@ class RandomBoardTicTacToe:
         """
         # fixxxx
         if sum(row.count(0) for row in self.game_state.board_state) == self.GRID_SIZE ** 2:
-            return  # Game just started, prevent premature game-over
+            return 
         
         if not self.game_state.is_terminal():
-            return  # Do nothing if the game is not over
+            return 
         
-        font = pygame.font.Font(None, 50)  # Define font
-        winner_text = f"Winner: {self.game_state.winner}"  # Get winner from game state
-        text = font.render(winner_text, True, self.WHITE)  # Create text surface
-        text_rect = text.get_rect(center=(self.size[0] // 2, self.size[1] // 2))  # Center the text
+        font = pygame.font.Font(None, 50)
+        winner_text = f"Winner: {self.game_state.winner}"  
+        text = font.render(winner_text, True, self.WHITE)  
+        text_rect = text.get_rect(center=(self.size[0] // 2, self.size[1] // 2))  
 
-        self.screen.fill(self.BLUE)  # Clear screen
-        self.screen.blit(text, text_rect)  # Draw text
-        pygame.display.update()  # Refresh display
+        self.screen.fill(self.BLUE)  
+        self.screen.blit(text, text_rect)  
+        pygame.display.update()  
 
             
 
@@ -146,9 +146,9 @@ class RandomBoardTicTacToe:
         THE RETURN VALUES FROM YOUR MINIMAX/NEGAMAX ALGORITHM SHOULD BE THE SCORE, MOVE WHERE SCORE IS AN INTEGER
         NUMBER AND MOVE IS AN X,Y LOCATION RETURNED BY THE AGENT
         """
-        print("AI Turn Started")
+       
         empty_cells = sum(x.count(0) for x in self.game_state.board_state)
-        print(f"Empty cells remaining: {empty_cells}")  # Debugging
+      
         if empty_cells > 16:
             depth = 4  # Large boards with many empty cells
         else:
@@ -162,11 +162,11 @@ class RandomBoardTicTacToe:
         else:
             raise ValueError("Invalid Choice.")
         
-        print(f"AI Selected Move: {move}")  # Debugging
+      
 
         if move is not None:
             x, y = move
-            print(f"AI Playing Move at ({x}, {y})")  # Debugging
+            
             self.game_state.board_state[x][y] = 1 if self.ai_symbol == 'O' else -1
             if self.ai_symbol == 'O':
                 self.draw_circle(x, y)
@@ -189,15 +189,14 @@ class RandomBoardTicTacToe:
         BOARD STATE
         """
         """ Initialize the game state. """
-        self.board = [[0 for _ in range(self.GRID_SIZE)] for _ in range(self.GRID_SIZE)]  # 0 means empty
-        self.turn_O = True  # Start with O
-        self.score_X = 0  # Reset X's score
-        self.score_O = 0  # Reset O's score
+        self.board = [[0 for _ in range(self.GRID_SIZE)] for _ in range(self.GRID_SIZE)] 
+        self.turn_O = True  
+        self.score_X = 0 
+        self.score_O = 0  
 
         self.WIDTH = (self.size[0] - self.SideMargin) / self.GRID_SIZE - self.OFFSET
         self.HEIGHT = (self.size[1] - self.TopMargin) / self.GRID_SIZE - self.OFFSET
 
-        # Ensure the cell size fits within the window even for large grids
         if self.WIDTH < 50 or self.HEIGHT < 50:
             self.WIDTH = 50
             self.HEIGHT = 50
