@@ -2,6 +2,8 @@ from GameStatus_5120 import GameStatus
 
 
 def minimax(game_state: GameStatus, depth: int, maximizingPlayer: bool, alpha=float('-inf'), beta=float('inf')):
+    
+	ai_symbol = 1 if maximizingPlayer else -1
 	terminal = game_state.is_terminal()
 	if (depth==0) or (terminal):
 		newScores = game_state.get_scores(terminal)
@@ -29,7 +31,7 @@ def minimax(game_state: GameStatus, depth: int, maximizingPlayer: bool, alpha=fl
 		for move in game_state.get_moves():
 			# get new game move and use recursion for minimax to decrease depth
 			newState = game_state.get_new_state(move)
-			currentScore, _ = minimax(newState, depth - 1, False, alpha, beta)
+			currentScore, _ = minimax(newState, depth - 1, not maximizingPlayer, alpha, beta)
 			
             # check current score and see if it is better and update move
 			if currentScore > value:
@@ -52,7 +54,7 @@ def minimax(game_state: GameStatus, depth: int, maximizingPlayer: bool, alpha=fl
 			# get new game move and use recursion for minimax to decrease depth
 			newState = game_state.get_new_state(move)
 			# change to true to switch player for recursive call
-			currentScore, _ = minimax(newState, depth - 1, True, alpha, beta)
+			currentScore, _ = minimax(newState, depth - 1, not maximizingPlayer, alpha, beta)
 			
             # check current score and see if it is better and update move
 			# check lower now 

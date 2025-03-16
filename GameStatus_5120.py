@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 
 
 class GameStatus:
@@ -18,19 +19,25 @@ class GameStatus:
         YOUR CODE HERE TO CHECK IF ANY CELL IS EMPTY WITH THE VALUE 0. IF THERE IS NO EMPTY
         THEN YOU SHOULD ALSO RETURN THE WINNER OF THE GAME BY CHECKING THE SCORES FOR EACH PLAYER 
         """
-		# compute scores
-		scores = self.get_scores(terminal=True)  
-		# for x winner
-		if scores > 0:
-			self.winner = "X"  
-		# for o winner
-		elif scores < 0:
-			self.winner = "O"  
-		# tie
-		else:
-			self.winner = "Draw"  
+		# check if someone has won
+		scores = self.get_scores(terminal=True)
+		if scores == float('inf'):
+			self.winner = "O"
+			# x wins
+			return True  
+		elif scores == float('-inf'):
+			self.winner = "X"
+			# o wins
+			return True  
 
-		return True  
+		# check if board is full 
+		for row in self.board_state:
+			if 0 in row:
+				# game still on
+				return False
+
+		self.winner = "Draw"
+		return True 
 
 
 	def get_scores(self, terminal):
@@ -45,43 +52,45 @@ class GameStatus:
 		rows = len(self.board_state)
 		cols = len(self.board_state[0])
 		scores = 0
-		check_point = 3 if terminal else 2
+		check_point = 3 if len(self.board_state) == 3 else 4
 		
-		# determine rows
+		# check rows
 		for row in range(rows):
 			for col in range(cols - check_point + 1):
 				window = self.board_state[row][col:col + check_point]
-				if window == [1] * check_point:  # All X
-					scores += 1
-				elif window == [-1] * check_point:  # All O
-					scores -= 1
+				if all(cell == 1 for cell in window): 
+					# max win
+					return float('inf')  # Max win
+				elif all(cell == -1 for cell in window):  
+					# min win
+					return float('-inf')  # Min win
 
-		# determine cols
+		# check cols
 		for col in range(cols):
 			for row in range(rows - check_point + 1):
 				window = [self.board_state[row + i][col] for i in range(check_point)]
-				if window == [1] * check_point:
-					scores += 1
-				elif window == [-1] * check_point:
-					scores -= 1
+				if all(cell == 1 for cell in window):
+					return float('inf')
+				elif all(cell == -1 for cell in window):
+					return float('-inf')
 
-		# diag top left bot right
+		# check diag top left bot right
 		for row in range(rows - check_point + 1):
 			for col in range(cols - check_point + 1):
 				window = [self.board_state[row + i][col + i] for i in range(check_point)]
-				if window == [1] * check_point:
-					scores += 1
-				elif window == [-1] * check_point:
-					scores -= 1
+				if all(cell == 1 for cell in window):
+					return float('inf')
+				elif all(cell == -1 for cell in window):
+					return float('-inf')
 
-		# diag bot left top right
+		# Check diag bot left top right
 		for row in range(check_point - 1, rows):
 			for col in range(cols - check_point + 1):
 				window = [self.board_state[row - i][col + i] for i in range(check_point)]
-				if window == [1] * check_point:
-					scores += 1
-				elif window == [-1] * check_point:
-					scores -= 1
+				if all(cell == 1 for cell in window):
+					return float('inf')
+				elif all(cell == -1 for cell in window):
+					return float('-inf')
 
 		# if scores + then x wins
 		# if scores - then o wins
@@ -105,9 +114,9 @@ class GameStatus:
 			for col in range(cols - check_point + 1):
 				window = self.board_state[row][col:col + check_point]
 				if window == [1] * check_point:
-					scores += 100  # Higher weight for X
+					scores += 100  
 				elif window == [-1] * check_point:
-					scores -= 100  # Higher weight for O
+					scores -= 100  
 
 		# determine cols
 		for col in range(cols):
@@ -158,8 +167,9 @@ class GameStatus:
 		return moves 
 
 	def get_new_state(self, move):
-		new_board_state = self.board_state.copy()
-		x, y = move[0], move[1]
-		# had to alter this
-		new_board_state[x][y] = 1 if self.turn_O else -1
-		return GameStatus(new_board_state, not self.turn_O)
+		new_board_state = copy.deepcopy(self.board_state)
+		x, y = move
+
+		symbol = 1 if self.turn_O else -1  
+		new_board_state[x][y] = symbol  
+		return GameStatus(new_board_state, not 	self.turn_O)
